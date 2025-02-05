@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Exceptions\UserException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AuthRequest;
 use App\Http\Requests\RecoverPasswordRequest;
 use App\Http\Requests\UserRequest;
 use App\Services\UserService;
@@ -15,6 +15,11 @@ class UserController extends Controller
     public function __construct(UserService $userService)
     {
         $this->userService = $userService;
+    }
+
+    public function auth(AuthRequest $request)
+    {
+        return $this->userService->auth($request->validated());
     }
 
     public function store(UserRequest $request)
