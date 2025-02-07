@@ -33,9 +33,21 @@ class TransactionService
     {
         try {
             $id = Auth::user()->id;
-            $credits = Transaction::where('receiver_id', $id)->sum('value');
-            $debits = Transaction::where('sender_id', $id)->sum('value');
-            return response()->json(['balance' =>  $credits - $debits], 200);
+            $credits = Transaction::where('receiver_id', $id)
+                ->where('type', 'credit')
+                ->sum('value');
+            $debits = Transaction::where('sender_id', $id)
+                ->where('type', 'debit')
+                ->sum('value');
+            $transfersSent = Transaction::where('sender_id', $id)
+                ->where('type', 'transfer')
+                ->sum('value');
+            $transfersReceived = Transaction::where('receiver_id', $id)
+                ->where('type', 'transfer')
+                ->sum('value');
+
+            $balance = ($credits + $transfersReceived) - ($debits + $transfersSent);
+            return response()->json(['balance' => $balance], 200);
         } catch (\Exception $e) {
             throw new GeneralExceptionCatch($e->getMessage());
         }
@@ -64,6 +76,7 @@ class TransactionService
             $user = Auth::user();
             if ($data["type"] == 'credit') {
                 User::where('id', $user->id)->increment('balance', $data["value"]);
+                $data["receiver_id"] = $user->id;
             } elseif ($data["type"] == 'debit') {
                 if ($data["value"] > $user->balance) {
                     return response()->json(['message' => 'Saldo insuficiente'], 400);
@@ -82,6 +95,7 @@ class TransactionService
                 User::where('id', $user->id)->decrement('balance', $data["value"]);
                 User::where('id', $data["receiver_id"])->increment('balance', $data["value"]);
             }
+            $data["sender_id"] = $user->id;
             Transaction::create($data);
             return response()->json(['message' => 'success'], 200);
         } catch (\Exception $e) {
