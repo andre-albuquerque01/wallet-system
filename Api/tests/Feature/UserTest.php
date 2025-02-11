@@ -25,7 +25,7 @@ class UserTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $response->assertJson(['messages' => 'success']);
+        $response->assertJson(['message' => 'success']);
     }
 
     public function test_erro_register_user(): void
@@ -59,6 +59,24 @@ class UserTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonStructure(['token']);
     }
+    
+    public function test_erro_auth_user_not_verifie(): void
+    {
+        User::factory()->create([
+            'email' => 'test3@example.com',
+            'password' => '@JesusTemPODER777',
+            'term_aceite' => 1,
+            'email_verified_at' => null
+        ]);
+
+        $response = $this->post('/api/v1/sessions', [
+            'email' => 'test3@example.com',
+            'password' => '@JesusTemPODER777',
+        ]);
+
+        $response->assertStatus(401);
+        $response->assertJson(['message' => 'Email not verified']);
+    }
 
     public function test_error_auth_user(): void
     {
@@ -68,6 +86,7 @@ class UserTest extends TestCase
         ]);
 
         $response->assertStatus(401);
+        $response->assertjson(['message' => 'user not created']);
     }
 
     public function test_update_user(): void
@@ -83,7 +102,7 @@ class UserTest extends TestCase
             'email' => 'test4@example.com',
             'password' => '@JesusTemPODER777',
         ]);
-    
+
         $loginResponse->assertStatus(200);
 
         $token = $loginResponse->json('token');
@@ -133,63 +152,63 @@ class UserTest extends TestCase
         $response = $this->postJson('/api/v1/re-send-email', [
             'email' => 'test4@example.com',
         ]);
-    
+
         $response->assertStatus(200);
         $response->assertJsonPath('data.message', 'send e-mail');
     }
 
-        public function test_verifies_email_successfully()
-        {
-            $user = User::factory()->create([
-                'remember_token' => 'valid_token',
-                'term_aceite' => 1
-            ]);
-    
-            $response = $this->getJson("/api/v1/verify-email/{$user->id}/valid_token");
-    
-            $response->assertStatus(200);
-            $this->assertNotNull($user->fresh()->email_verified_at);
-            $response->assertJsonPath('data.message', 'success');
-        }
-    
-        public function test_returns_error_for_invalid_token()
-        {
-            $user = User::factory()->create([
-                'remember_token' => 'valid_token',
-                'term_aceite' => 1
-            ]);
-    
-            $response = $this->getJson("/api/v1/verify-email/{$user->id}/invalid_token");
-    
-            $response->assertStatus(500);
-        }
-    
-        public function test_returns_error_for_non_existent_user()
-        {
-            $response = $this->getJson("/api/v1/verify-email/99999/some_token");
-    
-            $response->assertStatus(404);
-        }
-    
-        public function test_resends_verification_email()
-        {
-            $user = User::factory()->create([
-                'term_aceite' => 1
-            ]);
-    
-            Queue::fake();
-    
-            $response = $this->postJson('/api/v1/re-send-email', ['email' => $user->email]);
-    
-            $response->assertStatus(200);
-            Queue::assertPushed(SendVerifyEmailJob::class);
-            $response->assertJsonPath('data.message', 'send e-mail');
-        }
-    
-        public function test_returns_error_when_resending_email_to_non_existent_user()
-        {
-            $response = $this->postJson('/api/v1/re-send-email', ['email' => 'nonexistent@example.com']);
-    
-            $response->assertStatus(500);
-        }
+    public function test_verifies_email_successfully()
+    {
+        $user = User::factory()->create([
+            'remember_token' => 'valid_token',
+            'term_aceite' => 1
+        ]);
+
+        $response = $this->getJson("/api/v1/verify-email/{$user->id}/valid_token");
+
+        $response->assertStatus(200);
+        $this->assertNotNull($user->fresh()->email_verified_at);
+        $response->assertJsonPath('data.message', 'success');
+    }
+
+    public function test_returns_error_for_invalid_token()
+    {
+        $user = User::factory()->create([
+            'remember_token' => 'valid_token',
+            'term_aceite' => 1
+        ]);
+
+        $response = $this->getJson("/api/v1/verify-email/{$user->id}/invalid_token");
+
+        $response->assertStatus(500);
+    }
+
+    public function test_returns_error_for_non_existent_user()
+    {
+        $response = $this->getJson("/api/v1/verify-email/99999/some_token");
+
+        $response->assertStatus(404);
+    }
+
+    public function test_resends_verification_email()
+    {
+        $user = User::factory()->create([
+            'term_aceite' => 1
+        ]);
+
+        Queue::fake();
+
+        $response = $this->postJson('/api/v1/re-send-email', ['email' => $user->email]);
+
+        $response->assertStatus(200);
+        Queue::assertPushed(SendVerifyEmailJob::class);
+        $response->assertJsonPath('data.message', 'send e-mail');
+    }
+
+    public function test_returns_error_when_resending_email_to_non_existent_user()
+    {
+        $response = $this->postJson('/api/v1/re-send-email', ['email' => 'nonexistent@example.com']);
+
+        $response->assertStatus(500);
+    }
 }
