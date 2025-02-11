@@ -20,12 +20,14 @@ class UserService
     {
         try {
             $user = User::where('email', $data['email'])->first();
-            if ($user->email_verified_at == null) {
-                throw new UserException('Email not verified', 401);
+            if (!$user) {
+                return response()->json(['message' => 'user not created'], 401);
             }
             if (!$token = Auth::attempt($data)) {
-
-                return response()->json(['messages' => 'email or password wrong'], 401);
+                return response()->json(['message' => 'email or password wrong'], 401);
+            }
+            if ($user->email_verified_at == null) {
+                return response()->json(['message' => 'Email not verified'], 401);
             }
 
             return response()->json(['token' => $token], 200);
@@ -41,7 +43,7 @@ class UserService
             $data['remember_token'] = Str::random(60);
             $user = User::create($data);
             SendVerifyEmailJob::dispatch($user->email, $data['remember_token'], $user->id);
-            return response()->json(['messages' => 'success'], 200);
+            return response()->json(['message' => 'success'], 200);
         } catch (\Exception $e) {
             throw new GeneralExceptionCatch('Register failed', 400);
         }
@@ -62,13 +64,13 @@ class UserService
         try {
             $user = User::where('id', Auth::user()->id)->first();
             if (!$user) {
-                return response()->json(['messages' => 'User not found'], 404);
+                return response()->json(['message' => 'User not found'], 404);
             }
             if (!Hash::check($data['password'], $user->password)) {
-                return response()->json(['messages' => 'Password incorrect'], 401);
+                return response()->json(['message' => 'Password incorrect'], 401);
             }
             $user->update($data);
-            return response()->json(['messages' => 'success'], 200);
+            return response()->json(['message' => 'success'], 200);
         } catch (\Exception $e) {
             throw new GeneralExceptionCatch('Update failed', 400);
         }
@@ -79,7 +81,7 @@ class UserService
         try {
             $user = User::findOrFail(Auth::user()->id);
             $user->touch('deleted_at');
-            return response()->json(['messages' => 'success'], 200);
+            return response()->json(['message' => 'success'], 200);
         } catch (\Exception $e) {
             throw new GeneralExceptionCatch('Delete failed', 400);
         }
