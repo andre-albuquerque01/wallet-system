@@ -147,3 +147,43 @@ export async function TransactionCredit(state: { ok: boolean, error: string }, r
     }
 }
 
+export async function TransactionTransfer(state: { ok: boolean, error: string }, request: FormData) {
+    const schema = z.object({
+        type: z.string().default('transfer'),
+        email: z.string().email(),
+        value: z.string(),
+    })
+
+    const parsedData = Object.fromEntries(request.entries());
+    const result = schema.safeParse(parsedData);
+
+    if (!result.success) {
+        return { ok: false, error: "* " + result.error.errors.map(e => e.message).join(" * ") };
+    }
+
+    const cookiesStore = await cookies()
+
+    try {
+        const response = await ApiServer('transactions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                Authorization: `Bearer ${cookiesStore.get('token')?.value}`,
+            },
+            body: JSON.stringify(result.data),
+        })
+
+        const data = await response.json()
+
+        if (data.message !== 'success') {
+            return UserError(data.message)
+        }
+
+        revalidatePath('/dashboard')
+        return { ok: true, error: '' }
+    } catch (error) {
+        return ApiError(error)
+    }
+}
+
