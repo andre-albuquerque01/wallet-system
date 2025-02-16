@@ -16,6 +16,7 @@ class TransactionService
             $id = Auth::user()->id;
             $transactions = Transaction::where('sender_id', $id)
                 ->orWhere('receiver_id', $id)
+                ->whereNull('deleted_at')
                 ->orderBy('created_at', 'desc')
                 ->get();
 
@@ -35,15 +36,19 @@ class TransactionService
             $id = Auth::user()->id;
             $credits = Transaction::where('receiver_id', $id)
                 ->where('type', 'credit')
+                ->whereNull('deleted_at')
                 ->sum('value');
             $debits = Transaction::where('sender_id', $id)
                 ->where('type', 'debit')
+                ->whereNull('deleted_at')
                 ->sum('value');
             $transfersSent = Transaction::where('sender_id', $id)
                 ->where('type', 'transfer')
+                ->whereNull('deleted_at')
                 ->sum('value');
             $transfersReceived = Transaction::where('receiver_id', $id)
                 ->where('type', 'transfer')
+                ->whereNull('deleted_at')
                 ->sum('value');
 
             $balance = ($credits + $transfersReceived) - ($debits + $transfersSent);
@@ -58,6 +63,7 @@ class TransactionService
         try {
             $transactions = Transaction::where('sender_id', $id)
                 ->orWhere('receiver_id', $id)
+                ->whereNull('deleted_at')
                 ->orderBy('created_at', 'desc')
                 ->get();
 
@@ -87,10 +93,13 @@ class TransactionService
                     return response()->json(['message' => 'Saldo insuficiente para transferência'], 400);
                 }
 
-                $receiver = User::find($data["receiver_id"]);
-                if (!$receiver) {
+                $searchUser = User::where('email', $data["email"])->first();
+
+                if (!$searchUser) {
                     return response()->json(['message' => 'Destinatário não encontrado'], 404);
                 }
+
+                $data["receiver_id"] = $searchUser->id;
 
                 User::where('id', $user->id)->decrement('balance', $data["value"]);
                 User::where('id', $data["receiver_id"])->increment('balance', $data["value"]);
