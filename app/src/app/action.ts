@@ -232,6 +232,36 @@ export async function UserVerifyEmail(id: string, token: string) {
     }
 }
 
+export async function UserSendEmailTokenRecoverPassword(state: { ok: boolean, error: string }, request: FormData) {
+    const schema = z.object({
+        email: z.string().email(),
+    })
+    const requestJson = Object.fromEntries(request)
+    const result = schema.safeParse(requestJson)
+
+    if (!result.success) {
+        return { ok: false, error: "* " + result.error.errors.map(e => e.message).join(" * ") };
+    }
+
+    try {
+        const response = await ApiServer('sendTokenRecover', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+            },
+            body: JSON.stringify(result.data),
+        })
+
+
+        const data = await response.json()
+
+        return data
+    } catch (error) {
+        return ApiError(error)
+    }
+}
+
 export async function UserResetPassword(request: FormData) {
     const authenticateBodySchema = z.object({
         token: z.string(),
