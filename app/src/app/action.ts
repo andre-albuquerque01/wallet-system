@@ -309,6 +309,26 @@ export async function UserResetPassword(request: FormData) {
 }
 
 // Wallet
+export async function GetWallerUser() {
+    const cookiesStore = await cookies()
+    try {
+        const response = await ApiServer('transactions', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                Authorization: `Bearer ${cookiesStore.get('token')?.value}`,
+            },
+        })
+
+        const data = await response.json()
+
+        return data
+    } catch (error) {
+        return ApiError(error)
+    }
+}
+
 export async function TransactionCredit(state: { ok: boolean, error: string }, request: FormData) {
     const schema = z.object({
         type: z.string().default('credit'),
