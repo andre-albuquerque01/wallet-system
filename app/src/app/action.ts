@@ -147,6 +147,37 @@ export async function UserDelete() {
     }
 }
 
+export async function UserSendEmailVerification(state: { ok: boolean, error: string }, request: FormData) {
+    const schema = z.object({
+        email: z.string().email(),
+    })
+    const requestJson = Object.fromEntries(request)
+    const result = schema.safeParse(requestJson)
+
+    if (!result.success) {
+        return { ok: false, error: "* " + result.error.errors.map(e => e.message).join(" * ") };
+    }
+
+
+    try {
+        const response = await ApiServer('re-send-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+            },
+            body: JSON.stringify(result.data),
+        })
+
+
+        const data = await response.json()
+
+        return data
+    } catch (error) {
+        return ApiError(error)
+    }
+}
+
 // Wallet
 export async function TransactionCredit(state: { ok: boolean, error: string }, request: FormData) {
     const schema = z.object({
