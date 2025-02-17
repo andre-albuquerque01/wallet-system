@@ -111,7 +111,27 @@ export async function UserProfile() {
     const cookiesStore = await cookies()
     try {
         const response = await ApiServer('user', {
-            method: 'POST',
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                Authorization: `Bearer ${cookiesStore.get('token')?.value}`,
+            },
+        })
+
+        const data = await response.json()
+
+        return data
+    } catch (error) {
+        return ApiError(error)
+    }
+}
+
+export async function UserDelete() {
+    const cookiesStore = await cookies()
+    try {
+        const response = await ApiServer('user', {
+            method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 Accept: 'application/json',
