@@ -147,6 +147,46 @@ export async function UserDelete() {
     }
 }
 
+export async function UserUpdate(request: FormData) {
+    const authenticateBodySchema = z.object({
+        name: z.string(),
+        email: z.string().email(),
+        password: z.string(),
+    })
+
+    const requestJson = Object.fromEntries(request)
+    const result = authenticateBodySchema.safeParse(requestJson)
+
+    if (!result.success) {
+        return { ok: false, error: "* " + result.error.errors.map(e => e.message).join(" * ") };
+    }
+
+    const cookiesStore = await cookies()
+
+    try {
+        const response = await ApiServer('user', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                Authorization: `Bearer ${cookiesStore.get('token')?.value}`,        
+            },
+            body: JSON.stringify(result.data),
+        })
+
+        const data = await response.json()
+
+        if (!data.token) {
+            return UserError(data.message)
+        }
+
+    } catch (error) {
+        return ApiError(error)
+    }
+
+    redirect('/dashboard')
+}
+
 export async function UserSendEmailVerification(state: { ok: boolean, error: string }, request: FormData) {
     const schema = z.object({
         email: z.string().email(),
@@ -178,7 +218,7 @@ export async function UserSendEmailVerification(state: { ok: boolean, error: str
     }
 }
 
-export async function UserVarifyEmail(id: string, token: string){
+export async function UserVerifyEmail(id: string, token: string){
     try {
         const response = await ApiServer(`verify-email/${id}/${token}`, {
             method: 'GET',
