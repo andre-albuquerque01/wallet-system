@@ -169,7 +169,7 @@ export async function UserUpdate(request: FormData) {
             headers: {
                 'Content-Type': 'application/json',
                 Accept: 'application/json',
-                Authorization: `Bearer ${cookiesStore.get('token')?.value}`,        
+                Authorization: `Bearer ${cookiesStore.get('token')?.value}`,
             },
             body: JSON.stringify(result.data),
         })
@@ -218,7 +218,7 @@ export async function UserSendEmailVerification(state: { ok: boolean, error: str
     }
 }
 
-export async function UserVerifyEmail(id: string, token: string){
+export async function UserVerifyEmail(id: string, token: string) {
     try {
         const response = await ApiServer(`verify-email/${id}/${token}`, {
             method: 'GET',
@@ -230,6 +230,52 @@ export async function UserVerifyEmail(id: string, token: string){
     } catch (error) {
         return ApiError(error)
     }
+}
+
+export async function UserResetPassword(request: FormData) {
+    const authenticateBodySchema = z.object({
+        token: z.string(),
+        email: z.string().email(),
+        password: z
+            .string()
+            .min(8, "A senha deve ter pelo menos 8 caracteres.")
+            .regex(/[A-Z]/, "A senha deve conter pelo menos uma letra maiúscula.")
+            .regex(/[0-9]/, "A senha deve conter pelo menos um número.")
+            .regex(/[^A-Za-z0-9]/, "A senha deve conter pelo menos um caractere especial."),
+        password_confirmation: z.string().min(8, "A confirmação de senha deve ter pelo menos 8 caracteres."),
+    }).refine((data) => data.password === data.password_confirmation, {
+        path: ["password_confirmation"],
+        message: "As senhas devem coincidir.",
+    });
+
+    const requestJson = Object.fromEntries(request)
+    const result = authenticateBodySchema.safeParse(requestJson)
+
+    if (!result.success) {
+        return { ok: false, error: "* " + result.error.errors.map(e => e.message).join(" * ") };
+    }
+
+    try {
+        const response = await ApiServer('resetPassword', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+            },
+            body: JSON.stringify(result.data),
+        })
+
+        const data = await response.json()
+
+        if (!data.token) {
+            return UserError(data.message)
+        }
+
+    } catch (error) {
+        return ApiError(error)
+    }
+
+    redirect('/')
 }
 
 // Wallet
