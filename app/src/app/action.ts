@@ -178,6 +178,20 @@ export async function UserSendEmailVerification(state: { ok: boolean, error: str
     }
 }
 
+export async function UserVarifyEmail(id: string, token: string){
+    try {
+        const response = await ApiServer(`verify-email/${id}/${token}`, {
+            method: 'GET',
+        })
+
+        const data = await response.json()
+
+        return data
+    } catch (error) {
+        return ApiError(error)
+    }
+}
+
 // Wallet
 export async function TransactionCredit(state: { ok: boolean, error: string }, request: FormData) {
     const schema = z.object({
