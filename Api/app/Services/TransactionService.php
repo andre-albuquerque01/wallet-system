@@ -14,7 +14,7 @@ class TransactionService
     {
         try {
             $id = Auth::user()->id;
-            $transactions = Transaction::where('sender_id', $id)
+            $transactions = Transaction::with(['sender', 'receiver'])->where('sender_id', $id)
                 ->orWhere('receiver_id', $id)
                 ->whereNull('deleted_at')
                 ->orderBy('created_at', 'desc')
