@@ -1,5 +1,6 @@
 import { CreditTransfer } from "@/components/transaction/credit";
 import { DebitTransfer } from "@/components/transaction/debit";
+import { HistoricComponent } from "@/components/transaction/historic";
 import { TransferTransaction } from "@/components/transaction/transfer";
 
 export default function WalletDashboard() {
@@ -13,6 +14,7 @@ export default function WalletDashboard() {
                     <CreditTransfer />
                     <DebitTransfer />
                     <TransferTransaction />
+                    <HistoricComponent />
                 </div>
             </div>
         </div>
