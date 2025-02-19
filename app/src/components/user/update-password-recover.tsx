@@ -80,12 +80,6 @@ export const UpdatePasswordComponent = ({ token }: { token: string }) => {
                         Confirmação de senha
                     </label>
                 </div>
-                <div className="w-96 max-md:w-80 text-sm flex flex-row items-center space-x-1 text-blue-400 hover:text-blue-600 underline">
-                    <input type="checkbox" name="term_aceite" className="p-2 rounded-md mr-1" required />
-                    <Link href="/term" >
-                        Termos de serviços e politicas de privacidade
-                    </Link>
-                </div>
                 <button disabled={pending} className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-all duration-300">
                     Alterar
                 </button>
