@@ -4,11 +4,11 @@ import Link from "next/link";
 export const UserProfileComponent = ({
     name,
     email,
-    nickname,
+    balance,
 }: {
     name: string;
     email: string;
-    nickname: string;
+    balance: number;
 }) => {
     return (
         <div className="max-w-7xl mx-auto p-6 bg-white shadow-md rounded-md">
@@ -23,8 +23,15 @@ export const UserProfileComponent = ({
                     <p className="text-lg font-semibold text-gray-800">{email}</p>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-600">Apelido</label>
-                    <p className="text-lg font-semibold text-gray-800">{nickname}</p>
+                    <label className="block text-sm font-medium text-gray-600">Valor na conta</label>
+                    <p className="text-lg font-semibold text-gray-800">
+                        {balance.toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL',
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 2,
+                        })}
+                    </p>
                 </div>
                 <div className="mt-6">
                     <p className="text-sm text-gray-500">
