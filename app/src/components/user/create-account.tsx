@@ -84,15 +84,15 @@ export const CreateAccount = () => {
                         htmlFor="password2"
                         className="absolute left-3 top-2 text-gray-400 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-gray-500 peer-placeholder-shown:text-base text-md transition-all peer-focus:top-[-8] peer-focus:text-xs peer-focus:text-blue-500"
                     >
-                       Confirmação de senha
+                        Confirmação de senha
                     </label>
                 </div>
                 <div className="w-96 max-md:w-80 text-sm flex flex-row items-center space-x-1 text-blue-400 hover:text-blue-600 underline">
-                        <input type="checkbox" name="term_aceite" className="p-2 rounded-md mr-1" required />
-                        <Link href="/term" >
-                            Termos de serviços e politicas de privacidade
-                        </Link>
-                    </div>
+                    <input type="checkbox" name="term_aceite" className="p-2 rounded-md mr-1" required />
+                    <Link href="/term" >
+                        Termos de serviços e politicas de privacidade
+                    </Link>
+                </div>
                 <button disabled={pending} className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-all duration-300">
                     Registrar
                 </button>
