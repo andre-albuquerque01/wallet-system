@@ -1,28 +1,10 @@
 'use client'
 
-export const HistoricComponent = () => {
-    const data = [
-        {
-            type: 'credit',
-            value: 10000,
-            created_at: '12/03/2022',
-            receiver: null
-        },
-        {
-            type: 'debit',
-            value: 10000,
-            created_at: '12/03/2022',
-            receiver: null
-        },
-        {
-            type: 'transfer',
-            value: 10000,
-            created_at: '12/03/2022',
-            receiver: {
-                name: 'André'
-            }
-        }
-    ]
+import { GetWallerUserInterface } from "@/app/action"
+import { FormatDate } from "@/data/formated-date"
+
+export const HistoricComponent = ({ data }: { data: GetWallerUserInterface[] }) => {
+
     return (
         <div className="mt-4 border-t pt-4">
             <h4 className="text-lg font-medium">Histórico</h4>
@@ -33,7 +15,12 @@ export const HistoricComponent = () => {
                             {historic.type === 'credit' ? 'Crédito' : historic.type === 'debit' ? 'Débito' : 'Transferência'}
                         </span>
                         <span className="text-sm">
-                            {historic.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} - {historic.created_at}
+                            {historic.value.toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL',
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 2,
+                        })} - {FormatDate(historic.created_at)}
                         </span>
                         {historic?.receiver && (
                             <>
