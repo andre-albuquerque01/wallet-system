@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { FaArrowLeft } from "react-icons/fa";
 
 export const UserProfileComponent = ({
     name,
@@ -12,6 +13,11 @@ export const UserProfileComponent = ({
 }) => {
     return (
         <div className="max-w-7xl mx-auto p-6 bg-white shadow-md rounded-md">
+            <Link href="/dashboard" className="inline-block">
+                <span className="flex flex-row gap-2 items-center">
+                    <FaArrowLeft size={14} />Voltar
+                </span>
+            </Link>
             <h1 className="text-2xl font-bold text-gray-800 mb-4">Perfil do Usuário</h1>
             <div className="space-y-4">
                 <div>
