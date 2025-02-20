@@ -9,7 +9,7 @@ export default async function HomeUser() {
             <UserProfileComponent
                 name={data.name}
                 email={data.email}
-                nickname={data.nickname}
+                balance={data.balance}  
             />
         </div>
     );
