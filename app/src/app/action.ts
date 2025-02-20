@@ -107,6 +107,11 @@ export async function UserCreateAccount(state: { ok: boolean, error: string }, r
     redirect('/')
 }
 
+export interface UserProfileInterface {
+    name: string,
+    email: string,
+    balance: string
+}
 export async function UserProfile() {
     const cookiesStore = await cookies()
     try {
@@ -121,7 +126,7 @@ export async function UserProfile() {
 
         const data = await response.json()
 
-        return data
+        return data.data
     } catch (error) {
         return ApiError(error)
     }
@@ -309,6 +314,21 @@ export async function UserResetPassword(request: FormData) {
 }
 
 // Wallet
+export interface GetWallerUserInterface {
+    type: string,
+    value: number,
+    created_at: string,
+    receiver: {
+        name: string,
+        email: string,
+        balance: string
+    },
+    sender: {
+        name: string,
+        email: string,
+        balance: string
+    }
+}
 export async function GetWallerUser() {
     const cookiesStore = await cookies()
     try {
@@ -323,12 +343,16 @@ export async function GetWallerUser() {
 
         const data = await response.json()
 
-        return data
+        return data.data
     } catch (error) {
-        return ApiError(error)
+        console.error(error);
+        return null
     }
 }
 
+interface GetBalanceWallerUserInterface {
+    balance: number
+}
 export async function GetBalanceWallerUser() {
     const cookiesStore = await cookies()
     try {
@@ -343,9 +367,10 @@ export async function GetBalanceWallerUser() {
 
         const data = await response.json()
 
-        return data
+        return data as GetBalanceWallerUserInterface
     } catch (error) {
-        return ApiError(error)
+        console.error(error)
+        return null
     }
 }
 
