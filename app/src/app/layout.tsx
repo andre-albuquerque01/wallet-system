@@ -20,9 +20,38 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${interFont.variable} antialiased container mx-auto min-h-screen`}
+        className={`${interFont.variable} `}
       >
-        {children}
+        <div className="fixed top-0 -z-10 h-full w-full">
+          <div className="relative w-full min-h-screen bg-white overflow-hidden">
+            <svg
+              className="absolute top-0 left-0 w-full h-44"
+              viewBox="0 0 1200 600"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="none"
+            >
+              <path
+                d="M0,450 Q300,600 600,450 T1200,450 L1200,0 L0,0 Z"
+                fill="#FF7F27"
+              />
+            </svg>
+            <svg
+              className="absolute bottom-0 left-0 w-full h-44"
+              viewBox="0 0 1200 600"
+              xmlns="http://www.w3.org/2000/svg"
+              preserveAspectRatio="none"
+            >
+              <path
+                d="M0,150 Q300,0 600,150 T1200,150 L1200,600 L0,600 Z"
+                fill="#FF7F27"
+              />
+            </svg>
+          </div>
+        </div>
+
+        <div className="antialiased container mx-auto min-h-screen">
+          {children}
+        </div>
       </body>
     </html>
   );
