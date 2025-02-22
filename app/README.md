@@ -1,4 +1,4 @@
-## Configuração do Front-end
+# Configuração do Front-end
 
 Clone o repositório:
 
@@ -24,6 +24,6 @@ Inicie o servidor do Next.js:
 npm run dev
 ```
 
-### Passo 4: Acesso ao Sistema
+## Passo 4: Acesso ao Sistema
 
 Abra o navegador e acesse `http://localhost:3000` para utilizar o serviço.
