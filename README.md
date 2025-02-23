@@ -12,3 +12,27 @@ Para operar o sistema, são necessários os seguintes requisitos mínimos na sua
 - Deve ser possível que o usuário acesse o histórico de transação;
 - Deve ser possível que o usuário deposite, credita e tranfira.
 
+## Regras de Negócio
+
+- O usuário não deve se cadastrar com um e-mail duplicado;
+
+## Requisitos Não Funcionais
+
+- A senha do usuário precisa estar criptografada;
+- Os dados da aplicação precisam estar persistidos em um banco de dados;
+- O usuário deve ser identificado por um JWT.
+
+## Arquitetura do Sistema
+
+O sistema utiliza as seguintes tecnologias:
+
+- **Linguagens:** PHP, TypeScript
+- **Banco de Dados:** MySQL
+- **Frameworks:** Laravel, Next.js
+- **Arquitetura da API:** MVC, RESTful
+- **Outras Tecnologias:** React, Docker
+
+### Observação
+
+- O sistema utiliza filas (queues) no Laravel para enviar e-mails de forma assíncrona, funcionando em segundo plano.
+
