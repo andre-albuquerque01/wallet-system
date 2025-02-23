@@ -36,3 +36,65 @@ O sistema utiliza as seguintes tecnologias:
 
 - O sistema utiliza filas (queues) no Laravel para enviar e-mails de forma assíncrona, funcionando em segundo plano.
 
+## Como Iniciar o Sistema
+
+### Passo 1: Download dos Arquivos
+
+Clone o repositório:
+
+```bash
+git clone https://github.com/andre-albuquerque01/wallet-system.git
+```
+
+### Passo 2: Configuração do Back-end
+
+Entre na pasta back-end:
+
+```bash
+cd /Api
+```
+
+Inicialize os pacotes do Laravel:
+
+```php
+composer install
+```
+
+Crie um arquivo `.env` na raiz do seu projeto e configure as variáveis de ambiente conforme necessário.
+Execute `php artisan config:cache` para aplicar as configurações do arquivo `.env`.
+
+Inicie o servidor da API:
+
+```bash
+./vendor/bin/sail up
+```
+
+Para desativar o servidor da API:
+
+```bash
+./vendor/bin/sail down
+```
+
+### Passo 3: Configuração do Front-end
+
+Entre na pasta front-end:
+
+```bash
+cd ../app
+```
+
+Baixe as dependências do Node.js:
+
+```bash
+npm i
+```
+
+Inicie o servidor do Next.js:
+
+```bash
+npm run dev
+```
+
+### Passo 4: Acesso ao sistema
+
+Abra o navegador e acesse `http://localhost:3000` para utilizar o serviço.
